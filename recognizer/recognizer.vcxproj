@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(SolutionDir)recognizer.props" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -40,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\work\fetcher\.recognizer\include\leptonica;C:\work\fetcher\.recognizer\include\tesseract;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\work\fetcher\.recognizer\lib;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(TesseractInclude)leptonica;$(TesseractInclude)tesseract;$(IncludePath)</IncludePath>
+    <LibraryPath>$(TesseractLib);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\work\fetcher\.recognizer\include\leptonica;C:\work\fetcher\.recognizer\include\tesseract;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\work\fetcher\.recognizer\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(TesseractInclude)leptonica;$(TesseractInclude)tesseract;$(IncludePath)</IncludePath>
+    <LibraryPath>$(TesseractLib);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

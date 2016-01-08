@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "recognizer", "recognizer\recognizer.vcxproj", "{BD045E75-6F85-415F-83DB-AE7DEC9AB20C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "recogviewer", "recogviewer\recogviewer.vcxproj", "{F62E27C3-3EC5-40E9-BAA7-D35491159F96}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "restserver", "restserver\restserver.vcxproj", "{A2D7AF23-9C7A-497B-8FFE-B5E6DA01F987}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD045E75-6F85-415F-83DB-AE7DEC9AB20C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BD045E75-6F85-415F-83DB-AE7DEC9AB20C}.Debug|Win32.Build.0 = Debug|Win32
+		{BD045E75-6F85-415F-83DB-AE7DEC9AB20C}.Release|Win32.ActiveCfg = Release|Win32
+		{BD045E75-6F85-415F-83DB-AE7DEC9AB20C}.Release|Win32.Build.0 = Release|Win32
+		{F62E27C3-3EC5-40E9-BAA7-D35491159F96}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F62E27C3-3EC5-40E9-BAA7-D35491159F96}.Debug|Win32.Build.0 = Debug|Win32
+		{F62E27C3-3EC5-40E9-BAA7-D35491159F96}.Release|Win32.ActiveCfg = Release|Win32
+		{F62E27C3-3EC5-40E9-BAA7-D35491159F96}.Release|Win32.Build.0 = Release|Win32
+		{A2D7AF23-9C7A-497B-8FFE-B5E6DA01F987}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A2D7AF23-9C7A-497B-8FFE-B5E6DA01F987}.Debug|Win32.Build.0 = Debug|Win32
+		{A2D7AF23-9C7A-497B-8FFE-B5E6DA01F987}.Release|Win32.ActiveCfg = Release|Win32
+		{A2D7AF23-9C7A-497B-8FFE-B5E6DA01F987}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
