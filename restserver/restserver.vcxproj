@@ -41,13 +41,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(TesseractInclude)leptonica;$(TesseractInclude)tesseract;$(SolutionDir)3rdparty\crypto-algorithms;$(SolutionDir)3rdparty\libmicrohttpd\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(TesseractLib);$(SolutionDir)3rdparty\libmicrohttpd\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)3rdparty\crypto-algorithms;$(SolutionDir)3rdparty\mongoose;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(TesseractInclude)leptonica;$(TesseractInclude)tesseract;$(SolutionDir)3rdparty\crypto-algorithms;$(SolutionDir)3rdparty\libmicrohttpd\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(TesseractLib);$(SolutionDir)3rdparty\libmicrohttpd\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)3rdparty\crypto-algorithms;$(SolutionDir)3rdparty\mongoose;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -55,9 +55,10 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -72,7 +73,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -84,6 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="$(SolutionDir)3rdparty\mongoose\mongoose.c" />
     <ClCompile Include="start.cpp" />
     <ClCompile Include="$(SolutionDir)3rdparty\crypto-algorithms\sha256.c" />
   </ItemGroup>
