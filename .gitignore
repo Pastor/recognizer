@@ -8,3 +8,4 @@ Release
 *.obj
 *.user
 *.aps
+.vs
