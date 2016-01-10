@@ -2,6 +2,7 @@
 *.filters
 *.suo
 *.opensdf
+*.opendb
 Debug
 Release
 *.obj

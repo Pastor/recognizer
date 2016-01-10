@@ -1,5 +1,7 @@
 package ru.voskhod.tesseract.rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.*;
 
 import java.io.File;
@@ -12,9 +14,14 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 final class ClientImpl implements Client {
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .generateNonExecutableJson()
+            .disableHtmlEscaping()
+            .create();
     private static final int CONNECT_TIMEOUT_MILLIS = 30 * 1000;
-    private static final int READ_TIMEOUT_MILLIS = 30 * 1000;
-    private static final int WRITE_TIMEOUT_MILLIS = 30 * 1000;
+    private static final int READ_TIMEOUT_MILLIS = 30 * 30000;
+    private static final int WRITE_TIMEOUT_MILLIS = 30 * 30000;
 
     private final OkHttpClient client = new OkHttpClient();
     private final HttpUrl url;
@@ -51,7 +58,7 @@ final class ClientImpl implements Client {
     }
 
     @Override
-    public void put(File file) throws IOException {
+    public PutResult put(File file) throws IOException {
         HttpUrl url = this.url.newBuilder().addPathSegment("new").build();
         MediaType contentType = mimeType(file);
         RequestBody body = RequestBody.create(contentType, file);
@@ -61,7 +68,7 @@ final class ClientImpl implements Client {
         if (!execute.isSuccessful()) {
             throw new IOException(execute.message());
         }
-        System.out.println(execute.body().string());
+        return gson.fromJson(execute.body().charStream(), PutResult.class);
     }
 
     private static MediaType mimeType(File file) throws IOException {
