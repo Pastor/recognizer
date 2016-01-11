@@ -7,6 +7,9 @@
 [![Github Issues](https://img.shields.io/github/issues/Pastor/recognizer.svg)](http://github.com/Pastor/recognizer/issues)
 [![Github Tag](https://img.shields.io/github/tag/Pastor/recognizer.svg)](http://github.com/Pastor/recognizer/tags)
 
+[![Overv IO](https://img.shields.io/badge/overv.io-view-blue.svg)](https://overv.io/workspace/Pastor/famous-mouse/)
+[![Reviewable](https://img.shields.io/badge/reviewable-view-blue.svg)](https://reviewable.io/reviews#-)
+
 #3rdparty
 1.  `mongoose`
     - [git](https://github.com/cesanta/mongoose.git)
