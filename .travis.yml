@@ -2,6 +2,9 @@ language: cpp
 
 sudo: false
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
 # from https://github.com/nlohmann/json/blob/master/.travis.yml
 # from http://stackoverflow.com/a/32127147/266378
 matrix:
@@ -55,5 +58,6 @@ matrix:
 
 script:
   - make CXX=$COMPILER CXXFLAGS="-lstdc++"
+  - gcov restserver/start.cpp
   #- ./json_unit "*"
   #- valgrind --error-exitcode=1 --leak-check=full ./json_unit
