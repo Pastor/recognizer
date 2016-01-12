@@ -9,3 +9,4 @@ Release
 *.user
 *.aps
 .vs
+.temporary
