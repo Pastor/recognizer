@@ -49,5 +49,5 @@ install:
 
 script:
   - mkdir build
-  - cmake -H${BASEDIR} -B${BASEDIR}/build -DADD_INCLUDE_DIR=${BASEDIR}/tesseract-master/ccutil -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DTesseract=${BASEDIR}/tesseract-master/build
+  - cmake -H${BASEDIR} -B${BASEDIR}/build -DADD_INCLUDE_DIR=${BASEDIR}/tesseract-master/ccutil -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DTesseract_BUILD_DIR=${BASEDIR}/tesseract-master/build
   - make
