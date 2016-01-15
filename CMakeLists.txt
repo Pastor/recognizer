@@ -133,11 +133,11 @@ include_directories(3rdparty/mongoose)
 
 
 ########################################
-# LIBRARY tesseract
+# LIBRARY
 ########################################
 
-string(SUBSTRING ${VERSION_MINOR} 0 1 VERSION_MINOR_0)
-string(SUBSTRING ${VERSION_MINOR} 1 1 VERSION_MINOR_1)
+#string(SUBSTRING ${VERSION_MINOR} 0 1 VERSION_MINOR_0)
+#string(SUBSTRING ${VERSION_MINOR} 1 1 VERSION_MINOR_1)
 
 file(GLOB restserver_src
     "restserver/*.cpp"
