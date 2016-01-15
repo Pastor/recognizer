@@ -35,6 +35,10 @@ install:
   - wget --no-check-certificate https://www.cmake.org/files/v3.3/cmake-3.3.1-Linux-x86_64.sh
   - sudo sh cmake-3.3.1-Linux-x86_64.sh --skip-license --prefix=/usr
 
+  - if [[ $LINUX && "$CXX" = "g++" ]]; then sudo apt-get install -qq g++-4.9; fi
+  - if [[ $LINUX && "$CXX" = "g++" ]]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+  - g++ --version
+
   - wget -O leptonica.zip https://github.com/egorpugin/leptonica/archive/master.zip
   - unzip leptonica.zip -d .
   - cmake -Hleptonica-master -Bleptonica-master/build -DSTATIC=1
@@ -45,9 +49,6 @@ install:
   - cmake -Htesseract-master -Btesseract-master/build -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DSTATIC=1
   - make -C tesseract-master/build
 
-  - if [[ $LINUX && "$CXX" = "g++" ]]; then sudo apt-get install -qq g++-4.9; fi
-  - if [[ $LINUX && "$CXX" = "g++" ]]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
-  - g++ --version
 
 script:
   - mkdir build
