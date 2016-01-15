@@ -44,6 +44,8 @@ deploy:
   artifact: restserver.zip
   draft: false
   prerelease: true
+  tag: v$(appveyor_build_version)
   on:
+    tags: true
     branch: master                 
     appveyor_repo_tag: true        
