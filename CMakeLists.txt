@@ -38,6 +38,7 @@ set(MINIMUM_LEPTONICA_VERSION 1.71)
 set(MINIMUM_TESSERACT_VERSION 3.02)
 
 
+message(WARNING "Leptonica: " ${Leptonica_BUILD_DIR})
 if (NOT Leptonica_BUILD_DIR)
   find_package(Leptonica ${MINIMUM_LEPTONICA_VERSION} REQUIRED)
 else()
@@ -45,6 +46,7 @@ else()
   find_package(Leptonica ${MINIMUM_LEPTONICA_VERSION} REQUIRED CONFIG)
 endif()
 
+message(WARNING "Tesseract: " ${Tesseract_BUILD_DIR})
 if (NOT Tesseract_BUILD_DIR)
   find_package(Tesseract ${MINIMUM_LEPTONICA_VERSION} REQUIRED)
 else()
