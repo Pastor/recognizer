@@ -45,6 +45,7 @@ install:
   - cmake -Htesseract-master -Btesseract-master/build -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DSTATIC=1
   - make -C tesseract-master/build
 
+  - if [[ $LINUX && "$CXX" = "g++" ]]; then sudo apt-get install -qq g++-4.9; fi
   - if [[ $LINUX && "$CXX" = "g++" ]]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
 
 script:
