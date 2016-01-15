@@ -23,7 +23,6 @@ before_build:
   - msbuild tesseract-master/build/tesseract.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 build_script:
-  - echo %cwd%
   - mkdir build
-  - cmake %cwd%\.. -Bbuild -G "%generator%" -DADD_INCLUDE_DIR=%cwd%\tesseract-master\ccutil -DLeptonica_BUILD_DIR=%cwd%\leptonica-master\build -DTesseract_BUILD_DIR=%cwd%\tesseract-master\build -DSTATIC=1
-  - msbuild build/recognizer.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - cmake %cwd% -B%cwd%\build -G "%generator%" -DADD_INCLUDE_DIR=%cwd%\tesseract-master\ccutil -DLeptonica_BUILD_DIR=%cwd%\leptonica-master\build -DTesseract_BUILD_DIR=%cwd%\tesseract-master\build -DSTATIC=1
+  - msbuild %cwd%\build\recognizer.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
