@@ -12,6 +12,8 @@
 #pragma comment(lib, "ws2_32.lib")
 //#pragma comment(lib, "libtesseract302.lib")
 //#pragma comment(lib, "liblept168.lib")
+#else
+#define strnicmp strncasecmp
 #endif
 
 /** SHA256 */
