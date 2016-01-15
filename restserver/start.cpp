@@ -10,8 +10,8 @@
 
 #if defined(_WIN32)
 #pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "libtesseract302.lib")
-#pragma comment(lib, "liblept168.lib")
+//#pragma comment(lib, "libtesseract302.lib")
+//#pragma comment(lib, "liblept168.lib")
 #endif
 
 /** SHA256 */
