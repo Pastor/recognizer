@@ -7,6 +7,10 @@ platform:
 configuration:
   - Debug
 
+artifacts:
+  - path: restserver.zip
+    name: restserver
+
 before_build:
   - if %platform%==Win32 set generator=Visual Studio 14
   - if %platform%==Win64 set generator=Visual Studio 14 Win64
@@ -23,7 +27,23 @@ before_build:
   - msbuild tesseract-master/build/tesseract.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - git submodule update
 
+after_build:
+  - 7z a restserver.zip %cwd%\build\bin\Debug\*.exe %cwd%\build\bin\Debug\*.dll
+
 build_script:
   - mkdir build
   - cmake %cwd% -B%cwd%\build -G "%generator%" -DADD_INCLUDE_DIR=%cwd%\tesseract-master\ccutil -DLeptonica_BUILD_DIR=%cwd%\leptonica-master\build -DTesseract_BUILD_DIR=%cwd%\tesseract-master\build -DSTATIC=1
   - msbuild %cwd%\build\recognizer.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+deploy:
+  release: restserver-v$(appveyor_build_version)
+  description: 'Rest сервис распознавания для tesseract-ocr'
+  provider: GitHub
+  auth_token:
+    secure: zVAu1Dg7B/l9ru/eCoQnP6fMbjEJ1evpXNwMI07s31DaOAZ9pjwNu2d+t1e6kfJw
+  artifact: restserver.zip
+  draft: false
+  prerelease: true
+  on:
+    branch: master                 
+    appveyor_repo_tag: true        
