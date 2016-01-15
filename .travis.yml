@@ -22,6 +22,7 @@ addons:
     - g++-4.9
 
 before_install:
+  - export BASEDIR=`pwd`
   - if [[ $TRAVIS_OS_NAME == linux   ]]; then LINUX=true; fi
   - if [[ $TRAVIS_OS_NAME == osx     ]]; then OSX=true; fi
   
@@ -41,13 +42,12 @@ install:
 
   - wget -O tesseract.zip https://github.com/tesseract-ocr/tesseract/archive/master.zip
   - unzip tesseract.zip -d .
-  - cmake -Htesseract-master -Btesseract-master/build -DLeptonica_BUILD_DIR=leptonica-master/build -DSTATIC=1
+  - cmake -Htesseract-master -Btesseract-master/build -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DSTATIC=1
   - make -C tesseract-master/build
 
   - if [[ $LINUX && "$CXX" = "g++" ]]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
 
 script:
   - mkdir build
-  - cd build
-  - cmake .. -DADD_INCLUDE_DIR=tesseract-master/ccutil -DLeptonica_BUILD_DIR=leptonica-master/build -DTesseract=tesseract-master/build
+  - cmake -H${BASEDIR} -B${BASEDIR}/build -DADD_INCLUDE_DIR=${BASEDIR}/tesseract-master/ccutil -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DTesseract=${BASEDIR}/tesseract-master/build
   - make
