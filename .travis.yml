@@ -47,6 +47,7 @@ install:
 
   - if [[ $LINUX && "$CXX" = "g++" ]]; then sudo apt-get install -qq g++-4.9; fi
   - if [[ $LINUX && "$CXX" = "g++" ]]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+  - g++ --version
 
 script:
   - mkdir build
