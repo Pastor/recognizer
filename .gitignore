@@ -10,3 +10,4 @@ Release
 *.aps
 .vs
 .temporary
+.build
