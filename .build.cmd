@@ -5,23 +5,30 @@ set cwd=%CD%
 set downloader=%cwd%\.build\utils\bin\Release\hget.exe
 set unzipper=%cwd%\utils\7za 
 set zipper=%cwd%\utils\7za
+set git=%githome%\git.exe
 
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
 mkdir %cwd%\.build
-rem call :DependLibraries
+call :DependLibraries
 
-rem rd /s /q %cwd%\.build\recognizer
-rem mkdir %cwd%\.build\recognizer
+rd /s /q %cwd%\.build\recognizer
+mkdir %cwd%\.build\recognizer
 
-rem cmake %cwd% -B%cwd%\.build\recognizer -G "Visual Studio 14" -DADD_INCLUDE_DIR=%cwd%\.build\tesseract-master\ccutil -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build -DTesseract_BUILD_DIR=%cwd%\.build\tesseract-master\build -DSTATIC=1
-rem msbuild %cwd%\.build\recognizer\recognizer.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
+cmake %cwd% -B%cwd%\.build\recognizer -G "Visual Studio 14" -DADD_INCLUDE_DIR=%cwd%\.build\tesseract-master\ccutil ^
+                                                            -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build ^
+                                                            -DTesseract_BUILD_DIR=%cwd%\.build\tesseract-master\build ^
+                                                            -DSTATIC=1
+msbuild %cwd%\.build\recognizer\recognizer.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
 
 mkdir %cwd%\.build\recognizer\bin\Release\tessdata
 xcopy /S /E /Y /C %cwd%\3rdparty\tesseract\tessdata %cwd%\.build\recognizer\bin\Release\tessdata
 
-%zipper% a %cwd%\.build\restserver.zip %cwd%\.build\recognizer\bin\Release\restserver.exe %cwd%\3rdparty\redist.vs2015\vc_redist.x86.exe %cwd%\.build\recognizer\bin\Release\tessdata
-
+%zipper% a %cwd%\.build\restserver.zip ^
+           %cwd%\.build\recognizer\bin\Release\restserver.exe ^
+           %cwd%\3rdparty\redist.vs2015\vc_redist.x86.exe ^
+           %cwd%\.build\recognizer\bin\Release\tessdata ^
+           %cwd%\.build\tesseract-master\build\bin\Release\tesseract.exe
 
 exit /b
 rem ==========================================
