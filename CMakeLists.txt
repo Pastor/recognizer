@@ -39,7 +39,10 @@ set(VERSION_PLAIN ${VERSION_MAJOR}.${VERSION_MINOR})
 
 set(MINIMUM_LEPTONICA_VERSION 1.71)
 set(MINIMUM_TESSERACT_VERSION 3.02)
-
+#set(SQLite_URL       "https://www.sqlite.org/snapshot/sqlite-amalgamation-201601141433.zip")
+#set(SQLite_ARCHIVE   "${CMAKE_CURRENT_BINARY_DIR}/sqlite.zip")
+#set(SQLite_HASH      "ce0f8700274488fbd4351dba2f82a2822125807d")
+#set(SQLite_DIR       "${CMAKE_CURRENT_BINARY_DIR}/sqlite-current")
 
 #message(WARNING "Leptonica: " ${Leptonica_BUILD_DIR})
 if (NOT Leptonica_BUILD_DIR)
@@ -59,6 +62,23 @@ endif()
 
 #find_package(OpenCL QUIET)
 #find_package(PkgConfig)
+
+
+#file(DOWNLOAD
+#    ${SQLite_URL}
+#    ${SQLite_ARCHIVE}
+#    SHOW_PROGRESS
+#    EXPECTED_HASH SHA1=${SQLite_HASH}
+#)
+#execute_process(COMMAND mkdir ${SQLite_DIR})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E tar xz "${SQLite_ARCHIVE}"
+#    WORKING_DIRECTORY "${SQLite_DIR}"
+#    RESULT_VARIABLE __result
+#)
+#if(NOT __result EQUAL 0)
+#    message(FATAL_ERROR "error ${__result}")
+#endif()
+
 
 ###############################################################################
 #
@@ -132,12 +152,14 @@ if (WIN32)
     string(REPLACE "\\" "/" Json_DIR             ${Json_DIR})
     string(REPLACE "\\" "/" Mongoose_DIR         ${Mongoose_DIR})
     string(REPLACE "\\" "/" CryptoAlgorithms_DIR ${CryptoAlgorithms_DIR})
+    string(REPLACE "\\" "/" SQLite_DIR           ${SQLite_DIR})
 endif()
 
 include_directories(restserver)
 include_directories(${Json_DIR})
 include_directories(${Mongoose_DIR})
 include_directories(${CryptoAlgorithms_DIR})
+include_directories(${SQLite_DIR})
 
 ########################################
 # LIBRARY
@@ -162,6 +184,7 @@ file(GLOB restserver_hdr
 set(restserver_src ${restserver_src}
      ${CryptoAlgorithms_DIR}/sha256.c
      ${Mongoose_DIR}/mongoose.c
+     ${SQLite_DIR}/sqlite3.c
 )
 set(restserver_hdr ${restserver_hdr}
      ${CryptoAlgorithms_DIR}/sha256.h

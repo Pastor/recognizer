@@ -54,9 +54,11 @@ install:
   - unzip mongoose.zip -d .
   - wget -O json.zip https://github.com/nlohmann/json/archive/master.zip 
   - unzip json.zip -d .
+  - wget -O sqlite.zip https://www.sqlite.org/snapshot/sqlite-amalgamation-201601141433.zip 
+  - unzip sqlite.zip -d ./sqlite-master
 
 script:
   - mkdir build
-  - cmake -H${BASEDIR} -B${BASEDIR}/build -DADD_INCLUDE_DIR=${BASEDIR}/tesseract-master/ccutil -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DTesseract_BUILD_DIR=${BASEDIR}/tesseract-master/build -DMongoose_DIR=${BASEDIR}/mongoose-master -DCryptoAlgorithms_DIR=${BASEDIR}/crypto-algorithms-master -DJson_DIR=${BASEDIR}/json-master/src
+  - cmake -H${BASEDIR} -B${BASEDIR}/build -DADD_INCLUDE_DIR=${BASEDIR}/tesseract-master/ccutil -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DTesseract_BUILD_DIR=${BASEDIR}/tesseract-master/build -DMongoose_DIR=${BASEDIR}/mongoose-master -DCryptoAlgorithms_DIR=${BASEDIR}/crypto-algorithms-master -DJson_DIR=${BASEDIR}/json-master/src -DSQLite_DIR=${BASEDIR}/sqlite-master
   - cd build
   - make

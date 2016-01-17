@@ -5,7 +5,7 @@ platform:
   - Win64
 
 configuration:
-  - Debug
+  - Release
 
 artifacts:
   - path: restserver.zip
@@ -25,28 +25,29 @@ before_build:
   - 7z x tesseract.zip
   - cmake -Htesseract-master -Btesseract-master/build -G "%generator%" -DLeptonica_BUILD_DIR=%cwd%\leptonica-master\build -DSTATIC=1
   - msbuild tesseract-master/build/tesseract.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - ps: Start-FileDownload 'https://github.com/B-Con/crypto-algorithms/archive/master.zip' -FileName crypto-algorithms.zip
+  - ps: Start-FileDownload 'https://github.com/B-Con/crypto-algorithms/archive/master.zip'        -FileName crypto-algorithms.zip
   - 7z x crypto-algorithms.zip
-  - ps: Start-FileDownload 'https://github.com/cesanta/mongoose/archive/master.zip'        -FileName mongoose.zip
+  - ps: Start-FileDownload 'https://github.com/cesanta/mongoose/archive/master.zip'               -FileName mongoose.zip
   - 7z x mongoose.zip
-  - ps: Start-FileDownload 'https://github.com/nlohmann/json/archive/master.zip'           -FileName json.zip
+  - ps: Start-FileDownload 'https://github.com/nlohmann/json/archive/master.zip'                  -FileName json.zip
   - 7z x json.zip
-
+  - ps: Start-FileDownload 'https://www.sqlite.org/snapshot/sqlite-amalgamation-201601141433.zip' -FileName sqlite.zip
+  - 7z x sqlite.zip -osqlite-master
 after_build:
-  - 7z a restserver.zip %cwd%\build\bin\Debug\*.exe %cwd%\build\bin\Debug\*.dll
+  - 7z a restserver_%platform%.zip %cwd%\build\bin\Release\*.exe %cwd%\build\bin\Release\*.dll
 
 build_script:
   - mkdir build
-  - cmake %cwd% -B%cwd%\build -G "%generator%" -DADD_INCLUDE_DIR=%cwd%\tesseract-master\ccutil -DLeptonica_BUILD_DIR=%cwd%\leptonica-master\build -DTesseract_BUILD_DIR=%cwd%\tesseract-master\build -DMongoose_DIR=%cwd%\mongoose-master -DCryptoAlgorithms_DIR=%cwd%\crypto-algorithms-master -DJson_DIR=%cwd%\json-master\src -DSTATIC=1
+  - cmake %cwd% -B%cwd%\build -G "%generator%" -DADD_INCLUDE_DIR=%cwd%\tesseract-master\ccutil -DLeptonica_BUILD_DIR=%cwd%\leptonica-master\build -DTesseract_BUILD_DIR=%cwd%\tesseract-master\build -DMongoose_DIR=%cwd%\mongoose-master -DCryptoAlgorithms_DIR=%cwd%\crypto-algorithms-master -DJson_DIR=%cwd%\json-master\src -DSQLite_DIR=%cwd%\sqlite-master -DSTATIC=1
   - msbuild %cwd%\build\recognizer.sln /p:Platform=%vcplatform% /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 deploy:
-  release: restserver-v$(appveyor_build_version)
+  release: restserver-%platform%-v$(appveyor_build_version)
   description: 'Rest сервис распознавания для tesseract-ocr'
   provider: GitHub
   auth_token:
     secure: zVAu1Dg7B/l9ru/eCoQnP6fMbjEJ1evpXNwMI07s31DaOAZ9pjwNu2d+t1e6kfJw
-  artifact: restserver.zip
+  artifact: restserver_%platform%.zip
   draft: false
   prerelease: true
   tag: v$(appveyor_build_version)

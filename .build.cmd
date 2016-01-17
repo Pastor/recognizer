@@ -21,6 +21,7 @@ cmake %cwd% -B%cwd%\.build\recognizer -G "Visual Studio 14" -DADD_INCLUDE_DIR=%c
                                                             -DMongoose_DIR=%cwd%\.build\mongoose-master ^
                                                             -DCryptoAlgorithms_DIR=%cwd%\.build\crypto-algorithms-master ^
                                                             -DJson_DIR=%cwd%\.build\json-master\src ^
+                                                            -DSQLite_DIR=%cwd%\.build\sqlite-master ^
                                                             -DSTATIC=1
 msbuild %cwd%\.build\recognizer\recognizer.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
 
@@ -47,24 +48,28 @@ del /q %cwd%\.build\tesseract-master.zip
 del /q %cwd%\.build\mongoose-master.zip
 del /q %cwd%\.build\json-master.zip
 del /q %cwd%\.build\crypto-algorithms-master.zip
+del /q %cwd%\.build\sqlite-master.zip
 
-%downloader% https://github.com/egorpugin/leptonica/archive/master.zip      %cwd%\.build\leptonica-master.zip
-%downloader% https://github.com/tesseract-ocr/tesseract/archive/master.zip  %cwd%\.build\tesseract-master.zip
-%downloader% https://github.com/cesanta/mongoose/archive/master.zip         %cwd%\.build\mongoose-master.zip
-%downloader% https://github.com/nlohmann/json/archive/master.zip            %cwd%\.build\json-master.zip
-%downloader% https://github.com/B-Con/crypto-algorithms/archive/master.zip  %cwd%\.build\crypto-algorithms-master.zip
+%downloader% https://github.com/egorpugin/leptonica/archive/master.zip            %cwd%\.build\leptonica-master.zip
+%downloader% https://github.com/tesseract-ocr/tesseract/archive/master.zip        %cwd%\.build\tesseract-master.zip
+%downloader% https://github.com/cesanta/mongoose/archive/master.zip               %cwd%\.build\mongoose-master.zip
+%downloader% https://github.com/nlohmann/json/archive/master.zip                  %cwd%\.build\json-master.zip
+%downloader% https://github.com/B-Con/crypto-algorithms/archive/master.zip        %cwd%\.build\crypto-algorithms-master.zip
+%downloader% https://www.sqlite.org/snapshot/sqlite-amalgamation-201601141433.zip %cwd%\.build\sqlite-master.zip
 
 rd /s /q %cwd%\.build\leptonica-master
 rd /s /q %cwd%\.build\tesseract-master
 rd /s /q %cwd%\.build\mongoose-master
 rd /s /q %cwd%\.build\json-master
 rd /s /q %cwd%\.build\crypto-algorithms-master
+rd /s /q %cwd%\.build\sqlite-master
 
 %unzipper% x %cwd%\.build\leptonica-master.zip          -o%cwd%\.build
 %unzipper% x %cwd%\.build\tesseract-master.zip          -o%cwd%\.build
 %unzipper% x %cwd%\.build\mongoose-master.zip           -o%cwd%\.build
 %unzipper% x %cwd%\.build\json-master.zip               -o%cwd%\.build
 %unzipper% x %cwd%\.build\crypto-algorithms-master.zip  -o%cwd%\.build
+%unzipper% x %cwd%\.build\sqlite-master.zip             -o%cwd%\.build\sqlite-master
 
 cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G "Visual Studio 14" -DSTATIC=1
 msbuild %cwd%\.build\leptonica-master\build\leptonica.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
