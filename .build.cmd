@@ -1,17 +1,26 @@
 @echo off
 
+
+rem x64
+set platform=x86
+set buildtype=Release
+
 set PATH=%PATH%;C:\cmake\bin
 set cwd=%CD%
-set downloader=%cwd%\.build\utils\bin\Release\hget.exe
+set downloader=%cwd%\.build\utils\bin\%buildtype%\hget.exe
 set unzipper=%cwd%\utils\7za 
 set zipper=%cwd%\utils\7za
 set git=%githome%\git.exe
 
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-
 mkdir %cwd%\.build
 mkdir %cwd%\.build\include
 mkdir %cwd%\.build\lib
+
+
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %platform%
+
+if %platform%==x86 set vcplatform=Win32
+if %platform%==x64 set vcplatform=x64
 
 set INCLUDE=%cwd%\.build\include;%INCLUDE%
 set LIB=%cwd%\.build\lib;%LIB%
@@ -31,19 +40,20 @@ cmake %cwd% -B%cwd%\.build\recognizer -G "Visual Studio 14" -DADD_INCLUDE_DIR=%c
                                                             -DJson_DIR=%cwd%\.build\json-master\src ^
                                                             -DSQLite_DIR=%cwd%\.build\sqlite-master ^
                                                             -DSTATIC=1
-msbuild %cwd%\.build\recognizer\recognizer.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
+                                                            -DCMAKE_BUILD_TYPE=%buildtype%
+msbuild %cwd%\.build\recognizer\recognizer.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 
-mkdir %cwd%\.build\recognizer\bin\Release\tessdata
-xcopy /S /E /Y /C %cwd%\3rdparty\tesseract\tessdata %cwd%\.build\recognizer\bin\Release\tessdata
-xcopy /S /E /Y /C %cwd%\.build\leptonica-master\build\bin\Release\*.dll %cwd%\.build\recognizer\bin\Release
-xcopy /S /E /Y /C %cwd%\.build\tesseract-master\build\bin\Release\*.dll %cwd%\.build\recognizer\bin\Release
+mkdir %cwd%\.build\recognizer\bin\%buildtype%\tessdata
+xcopy /S /E /Y /C %cwd%\3rdparty\tesseract\tessdata %cwd%\.build\recognizer\bin\%buildtype%\tessdata
+xcopy /S /E /Y /C %cwd%\.build\leptonica-master\build\bin\%buildtype%\*.dll %cwd%\.build\recognizer\bin\%buildtype%
+xcopy /S /E /Y /C %cwd%\.build\tesseract-master\build\bin\%buildtype%\*.dll %cwd%\.build\recognizer\bin\%buildtype%
 
 %zipper% a %cwd%\.build\restserver.zip ^
-           %cwd%\.build\recognizer\bin\Release\*.exe ^
-           %cwd%\.build\recognizer\bin\Release\*.dll ^
+           %cwd%\.build\recognizer\bin\%buildtype%\*.exe ^
+           %cwd%\.build\recognizer\bin\%buildtype%\*.dll ^
            %cwd%\3rdparty\redist.vs2015\vc_redist.x86.exe ^
-           %cwd%\.build\recognizer\bin\Release\tessdata ^
-           %cwd%\.build\tesseract-master\build\bin\Release\tesseract.exe
+           %cwd%\.build\recognizer\bin\%buildtype%\tessdata ^
+           %cwd%\.build\tesseract-master\build\bin\%buildtype%\tesseract.exe
 
 exit /b
 rem ==========================================
@@ -51,8 +61,8 @@ rem ==========================================
 
 echo Utils libtaties and programs
 rd /s /q %CWD%\.build\utils
-cmake -H%cwd%\utils -B%cwd%\.build\utils -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=Release
-msbuild %cwd%\.build\utils\utils.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
+cmake -H%cwd%\utils -B%cwd%\.build\utils -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=%buildtype%
+msbuild %cwd%\.build\utils\utils.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 
 del /q %cwd%\.build\leptonica-master.zip
 del /q %cwd%\.build\tesseract-master.zip
@@ -89,12 +99,12 @@ cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G "
       -DCMAKE_PREFIX_PATH=%cwd%\.build ^
       -DCMAKE_INCLUDE_PATH=%cwd%\.build\include ^
       -DJPEG_LIBRARY=%cwd%\.build\lib\jpeg.lib
-msbuild %cwd%\.build\leptonica-master\build\leptonica.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
+msbuild %cwd%\.build\leptonica-master\build\leptonica.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\leptonica-master\build\src\Release\*.lib %cwd%\.build\lib
 
 cmake -H%cwd%\.build\tesseract-master -B%cwd%\.build\tesseract-master\build -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build -G "Visual Studio 14" -DSTATIC=1
-msbuild %cwd%\.build\tesseract-master\build\tesseract.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
-copy /V /Y %cwd%\.build\tesseract-master\build\src\Release\*.lib %cwd%\.build\lib
+msbuild %cwd%\.build\tesseract-master\build\tesseract.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+copy /V /Y %cwd%\.build\tesseract-master\build\src\%buildtype%\*.lib %cwd%\.build\lib
 
 exit /b
 
@@ -106,8 +116,8 @@ rd /s /q %cwd%\.build\jpeg-9b
 %downloader% http://www.ijg.org/files/jpegsr9b.zip %cwd%\.build\libjpeg.zip
 %unzipper% x %cwd%\.build\libjpeg.zip -o%cwd%\.build
 copy /V /Y %cwd%\3rdparty\libjpeg\CMakeLists.txt %cwd%\.build\jpeg-9b\CMakeLists.txt
-cmake -H%cwd%\.build\jpeg-9b -B%cwd%\.build\jpeg-9b\build -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=Release
-msbuild %cwd%\.build\jpeg-9b\build\jpeg.sln /p:Platform=Win32 /p:ReleaseBuild=true /p:Configuration=Release
+cmake -H%cwd%\.build\jpeg-9b -B%cwd%\.build\jpeg-9b\build -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=%buildtype%
+msbuild %cwd%\.build\jpeg-9b\build\jpeg.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\jpeg-9b\jconfig.h %cwd%\.build\include\jconfig.h
 copy /V /Y %cwd%\.build\jpeg-9b\jerror.h %cwd%\.build\include\jerror.h
 copy /V /Y %cwd%\.build\jpeg-9b\jpeglib.h %cwd%\.build\include\jpeglib.h
@@ -118,7 +128,7 @@ copy /V /Y %cwd%\.build\jpeg-9b\jconfig.h %cwd%\.build\leptonica-master\src\jcon
 copy /V /Y %cwd%\.build\jpeg-9b\jerror.h %cwd%\.build\leptonica-master\src\jerror.h
 copy /V /Y %cwd%\.build\jpeg-9b\jpeglib.h %cwd%\.build\leptonica-master\src\jpeglib.h
 copy /V /Y %cwd%\.build\jpeg-9b\jmorecfg.h %cwd%\.build\leptonica-master\src\jmorecfg.h
-copy /V /Y %cwd%\.build\jpeg-9b\build\Release\jpeg.lib %cwd%\.build\lib\jpeg.lib
+copy /V /Y %cwd%\.build\jpeg-9b\build\%buildtype%\jpeg.lib %cwd%\.build\lib\jpeg.lib
 
 exit /b
 
