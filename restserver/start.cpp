@@ -271,9 +271,9 @@ static void handle_recv(struct mg_connection *nc)
         mbuf_remove(&nc->recv_mbuf, written);
         data->bytes_left -= written;
         if (data->bytes_left <= 0) {
-            FileObject object;
-            std::string json;
-            long        size;
+            FileObject    object;
+            std::string   json;
+            long          size;
             unsigned char digest[SHA256_BLOCK_SIZE];
 
             // Request is complete, do something meaningful here.

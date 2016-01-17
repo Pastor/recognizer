@@ -41,7 +41,7 @@ set(MINIMUM_LEPTONICA_VERSION 1.71)
 set(MINIMUM_TESSERACT_VERSION 3.02)
 
 
-message(WARNING "Leptonica: " ${Leptonica_BUILD_DIR})
+#message(WARNING "Leptonica: " ${Leptonica_BUILD_DIR})
 if (NOT Leptonica_BUILD_DIR)
   find_package(Leptonica ${MINIMUM_LEPTONICA_VERSION} REQUIRED)
 else()
@@ -49,15 +49,13 @@ else()
   find_package(Leptonica ${MINIMUM_LEPTONICA_VERSION} REQUIRED CONFIG)
 endif()
 
-message(WARNING "Tesseract: " ${Tesseract_BUILD_DIR})
+#message(WARNING "Tesseract: " ${Tesseract_BUILD_DIR})
 if (NOT Tesseract_BUILD_DIR)
   find_package(Tesseract ${MINIMUM_LEPTONICA_VERSION} REQUIRED)
 else()
   set(Tesseract_DIR ${Tesseract_BUILD_DIR})
   find_package(Tesseract ${MINIMUM_LEPTONICA_VERSION} REQUIRED CONFIG)
 endif()
-
-message(WARNING "Tesseract include: " ${Tesseract_INCLUDE_DIRS})
 
 #find_package(OpenCL QUIET)
 #find_package(PkgConfig)
@@ -130,11 +128,16 @@ include_directories(${Tesseract_INCLUDE_DIRS})
 include_directories(${ADD_INCLUDE_DIR})
 include_directories(${CMAKE_BINARY_DIR})
 
-include_directories(restserver)
-include_directories(3rdparty/crypto-algorithms)
-include_directories(3rdparty/json)
-include_directories(3rdparty/mongoose)
+if (WIN32)
+    string(REPLACE "\\" "/" Json_DIR             ${Json_DIR})
+    string(REPLACE "\\" "/" Mongoose_DIR         ${Mongoose_DIR})
+    string(REPLACE "\\" "/" CryptoAlgorithms_DIR ${CryptoAlgorithms_DIR})
+endif()
 
+include_directories(restserver)
+include_directories(${Json_DIR})
+include_directories(${Mongoose_DIR})
+include_directories(${CryptoAlgorithms_DIR})
 
 ########################################
 # LIBRARY
@@ -145,14 +148,9 @@ include_directories(3rdparty/mongoose)
 
 file(GLOB restserver_src
     "restserver/*.cpp"
-    "3rdparty/crypto-algorithms/sha256.c"
-    "3rdparty/mongoose/mongoose.c"
 )
 file(GLOB restserver_hdr
     "restserver/*.h"
-    "3rdparty/crypto-algorithms/*.h"
-    "3rdparty/mongoose/*.h"
-    "3rdparty/json/*.hpp"
 )
 #if (WIN32)
 #    file(GLOB tesseract_win32_src "vs2010/port/*.cpp")
@@ -161,12 +159,15 @@ file(GLOB restserver_hdr
 #    set(tesseract_hdr ${tesseract_hdr} ${tesseract_win32_hdr})
 #endif()
 
-#set(tesseract_src ${tesseract_src}
-#    api/baseapi.cpp
-#    api/capi.cpp
-#    api/renderer.cpp
-#    api/pdfrenderer.cpp
-#)
+set(restserver_src ${restserver_src}
+     ${CryptoAlgorithms_DIR}/sha256.c
+     ${Mongoose_DIR}/mongoose.c
+)
+set(restserver_hdr ${restserver_hdr}
+     ${CryptoAlgorithms_DIR}/sha256.h
+     ${Mongoose_DIR}/mongoose.h
+     ${Json_DIR}/json.hpp
+)
 
 #add_library                     (tesseract ${LIBRARY_TYPE} ${tesseract_src} ${tesseract_hdr})
 #if (NOT STATIC)
