@@ -10,7 +10,7 @@ set git=%githome%\git.exe
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
 mkdir %cwd%\.build
-call :DependLibraries
+rem call :DependLibraries
 
 rd /s /q %cwd%\.build\recognizer
 mkdir %cwd%\.build\recognizer
