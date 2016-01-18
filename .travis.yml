@@ -22,11 +22,14 @@ addons:
     - g++-4.9
 
 before_install:
+  - pip install --user codecov
   - export BASEDIR=`pwd`
   - if [[ $TRAVIS_OS_NAME == linux   ]]; then LINUX=true; fi
   - if [[ $TRAVIS_OS_NAME == osx     ]]; then OSX=true; fi
   
   - if [[ $OSX ]]; then brew update; fi
+after_success:
+  - codecov
 
 install:
   - git submodule update
