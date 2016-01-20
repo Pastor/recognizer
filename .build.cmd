@@ -2,7 +2,7 @@
 
 
 rem x64
-set platform=x86
+set platform="x86"
 rem set platform="x64"
 set buildtype=Release
 
@@ -33,9 +33,13 @@ set LIB=%cwd%\.build\lib;%LIB%
 echo   Platform: %platform%
 echo VcPlatform: %vcplatform%
 echo      Build: %buildtype%
+echo  Generator: %generator%
+echo        CWD: %cwd%
+echo Downloader: %downloader%
 
 call :DependLibraries
 rem call :LeptonicaBuild
+
 
 rd /s /q %cwd%\.build\recognizer
 mkdir %cwd%\.build\recognizer
@@ -103,6 +107,7 @@ rd /s /q %cwd%\.build\sqlite-master
 
 :LeptonicaBuild
 call :JpegLibrary
+call :PngLibrary
 cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G %generator% ^
       -DSTATIC=1 ^
       -DCMAKE_PREFIX_PATH=%cwd%\.build ^
@@ -141,4 +146,41 @@ copy /V /Y %cwd%\.build\jpeg-9b\build\%buildtype%\jpeg.lib %cwd%\.build\lib\jpeg
 
 exit /b
 
+:PngLibrary
+echo Png library
+del /q %cwd%\.build\libpng.zip
+rd /s /q %cwd%\.build\libpng
+rd /s /q %cwd%\.build\zlib
+%downloader% ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/lpng1621.zip %cwd%\.build\libpng.zip
+%downloader% http://zlib.net/zlib128.zip %cwd%\.build\zlib.zip
+%unzipper% x %cwd%\.build\libpng.zip -o%cwd%\.build
+%unzipper% x %cwd%\.build\zlib.zip   -o%cwd%\.build
+move /Y %cwd%\.build\lpng1621 %cwd%\.build\libpng
+move /Y %cwd%\.build\zlib-1.2.8 %cwd%\.build\zlib
+copy /V /Y %cwd%\3rdparty\libpng\CMakeLists.txt %cwd%\.build\libpng\CMakeLists.txt
 
+cmake -H%cwd%\.build\zlib -B%cwd%\.build\zlib\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype%
+msbuild %cwd%\.build\zlib\build\zlib.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+copy /V /Y %cwd%\.build\zlib\build\zconf.h %cwd%\.build\zlib\zconf.h
+copy /V /Y %cwd%\.build\zlib\zlib.h %cwd%\.build\include\zlib.h
+copy /V /Y %cwd%\.build\zlib\zconf.h %cwd%\.build\include\zconf.h
+copy /V /Y %cwd%\.build\zlib\zlib.h %cwd%\.build\leptonica-master\src\zlib.h
+copy /V /Y %cwd%\.build\zlib\zconf.h %cwd%\.build\leptonica-master\src\zconf.h
+copy /V /Y %cwd%\.build\zlib\build\%buildtype%\zlibstatic.lib %cwd%\.build\lib\zlib.lib
+
+
+cmake -H%cwd%\.build\libpng -B%cwd%\.build\libpng\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype% -DZLIB_LIBRARY=%cwd%\.build\zlib\build\%buildtype%\zlibstatic.lib -DZLIB_INCLUDE_DIR=%cwd%\.build\zlib
+msbuild %cwd%\.build\libpng\build\png.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+
+copy /V /Y %cwd%\.build\libpng\png.h %cwd%\.build\include\png.h
+copy /V /Y %cwd%\.build\libpng\pngconf.h %cwd%\.build\include\pngconf.h
+copy /V /Y %cwd%\.build\libpng\pnglibconf.h %cwd%\.build\include\pnglibconf.h
+
+copy /V /Y %cwd%\.build\libpng\png.h %cwd%\.build\leptonica-master\src\png.h
+copy /V /Y %cwd%\.build\libpng\pngconf.h %cwd%\.build\leptonica-master\src\pngconf.h
+copy /V /Y %cwd%\.build\libpng\pnglibconf.h %cwd%\.build\leptonica-master\src\pnglibconf.h
+copy /V /Y %cwd%\.build\libpng\build\%buildtype%\png.lib %cwd%\.build\lib\png.lib
+
+exit /b
+
+rem http://dl.maptools.org/dl/libtiff/tiff-3.8.2.zip
