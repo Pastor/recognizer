@@ -64,7 +64,11 @@ set(png_src
     pngwrite.c
     pngwtran.c
     pngwutil.c
-
+    png.c
 )
+
 add_library  (png ${LIBRARY_TYPE} ${png_src} ${ZLIB_LIBRARY})
 export(TARGETS png FILE ${CMAKE_BINARY_DIR}/PngTargets.cmake)
+
+add_executable         (pngtest pngtest.c )
+target_link_libraries  (pngtest png ${ZLIB_LIBRARY})

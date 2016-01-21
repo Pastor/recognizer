@@ -39,7 +39,9 @@ echo Downloader: %downloader%
 
 call :DependLibraries
 rem call :LeptonicaBuild
-
+rem call :TesseractBuild
+rem call :PngLibrary
+rem exit /b
 
 rd /s /q %cwd%\.build\recognizer
 mkdir %cwd%\.build\recognizer
@@ -116,6 +118,7 @@ cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G %
 msbuild %cwd%\.build\leptonica-master\build\leptonica.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\leptonica-master\build\src\Release\*.lib %cwd%\.build\lib
 
+:TesseractBuild
 cmake -H%cwd%\.build\tesseract-master -B%cwd%\.build\tesseract-master\build -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build -G %generator% -DSTATIC=1
 msbuild %cwd%\.build\tesseract-master\build\tesseract.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\tesseract-master\build\src\%buildtype%\*.lib %cwd%\.build\lib
