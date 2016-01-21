@@ -48,7 +48,7 @@ xcopy /S /E /Y /C %cwd%\3rdparty\tesseract\tessdata %cwd%\.build\recognizer\bin\
 xcopy /S /E /Y /C %cwd%\.build\leptonica-master\build\bin\%buildtype%\*.dll %cwd%\.build\recognizer\bin\%buildtype%
 xcopy /S /E /Y /C %cwd%\.build\tesseract-master\build\bin\%buildtype%\*.dll %cwd%\.build\recognizer\bin\%buildtype%
 
-%zipper% a %cwd%\.build\restserver.zip ^
+%zipper% a %cwd%\.build\restserver_%platform%.zip ^
            %cwd%\.build\recognizer\bin\%buildtype%\*.exe ^
            %cwd%\.build\recognizer\bin\%buildtype%\*.dll ^
            %cwd%\3rdparty\redist.vs2015\vc_redist.x86.exe ^
