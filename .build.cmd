@@ -2,7 +2,8 @@
 
 
 rem x64
-set platform=x86
+set platform="x86"
+rem set platform="x64"
 set buildtype=Release
 
 set PATH=%PATH%;C:\cmake\bin
@@ -16,14 +17,25 @@ mkdir %cwd%\.build
 mkdir %cwd%\.build\include
 mkdir %cwd%\.build\lib
 
+if %platform%=="x86" set vcplatform=Win32
+if %platform%=="x86" set vcenvironment=x86
+if %platform%=="x86" set generator="Visual Studio 14"
+if %platform%=="x64" set vcplatform="x64"
+if %platform%=="x64" set vcenvironment=amd64
+if %platform%=="x64" set generator="Visual Studio 14 Win64"
 
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %platform%
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %vcenvironment%
 
-if %platform%==x86 set vcplatform=Win32
-if %platform%==x64 set vcplatform=x64
 
 set INCLUDE=%cwd%\.build\include;%INCLUDE%
 set LIB=%cwd%\.build\lib;%LIB%
+
+echo   Platform: %platform%
+echo VcPlatform: %vcplatform%
+echo      Build: %buildtype%
+echo  Generator: %generator%
+echo        CWD: %cwd%
+echo Downloader: %downloader%
 
 call :DependLibraries
 rem call :LeptonicaBuild
@@ -32,15 +44,16 @@ rem call :LeptonicaBuild
 rd /s /q %cwd%\.build\recognizer
 mkdir %cwd%\.build\recognizer
 
-cmake %cwd% -B%cwd%\.build\recognizer -G "Visual Studio 14" -DADD_INCLUDE_DIR=%cwd%\.build\tesseract-master\ccutil ^
-                                                            -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build ^
-                                                            -DTesseract_BUILD_DIR=%cwd%\.build\tesseract-master\build ^
-                                                            -DMongoose_DIR=%cwd%\.build\mongoose-master ^
-                                                            -DCryptoAlgorithms_DIR=%cwd%\.build\crypto-algorithms-master ^
-                                                            -DJson_DIR=%cwd%\.build\json-master\src ^
-                                                            -DSQLite_DIR=%cwd%\.build\sqlite-master ^
-                                                            -DSTATIC=1
-                                                            -DCMAKE_BUILD_TYPE=%buildtype%
+cmake %cwd% -B%cwd%\.build\recognizer -G %generator% ^
+                                      -DADD_INCLUDE_DIR=%cwd%\.build\tesseract-master\ccutil ^
+                                      -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build ^
+                                      -DTesseract_BUILD_DIR=%cwd%\.build\tesseract-master\build ^
+                                      -DMongoose_DIR=%cwd%\.build\mongoose-master ^
+                                      -DCryptoAlgorithms_DIR=%cwd%\.build\crypto-algorithms-master ^
+                                      -DJson_DIR=%cwd%\.build\json-master\src ^
+                                      -DSQLite_DIR=%cwd%\.build\sqlite-master ^
+                                      -DSTATIC=1 ^
+                                      -DCMAKE_BUILD_TYPE=%buildtype%
 msbuild %cwd%\.build\recognizer\recognizer.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 
 mkdir %cwd%\.build\recognizer\bin\%buildtype%\tessdata
@@ -51,7 +64,7 @@ xcopy /S /E /Y /C %cwd%\.build\tesseract-master\build\bin\%buildtype%\*.dll %cwd
 %zipper% a %cwd%\.build\restserver_%platform%.zip ^
            %cwd%\.build\recognizer\bin\%buildtype%\*.exe ^
            %cwd%\.build\recognizer\bin\%buildtype%\*.dll ^
-           %cwd%\3rdparty\redist.vs2015\vc_redist.x86.exe ^
+           %cwd%\3rdparty\redist.vs2015\vc_redist.%platform%.exe ^
            %cwd%\.build\recognizer\bin\%buildtype%\tessdata ^
            %cwd%\.build\tesseract-master\build\bin\%buildtype%\tesseract.exe
 
@@ -61,7 +74,7 @@ rem ==========================================
 
 echo Utils libtaties and programs
 rd /s /q %CWD%\.build\utils
-cmake -H%cwd%\utils -B%cwd%\.build\utils -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=%buildtype%
+cmake -H%cwd%\utils -B%cwd%\.build\utils -G %generator% -DCMAKE_BUILD_TYPE=%buildtype%
 msbuild %cwd%\.build\utils\utils.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 
 del /q %cwd%\.build\leptonica-master.zip
@@ -94,7 +107,8 @@ rd /s /q %cwd%\.build\sqlite-master
 
 :LeptonicaBuild
 call :JpegLibrary
-cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G "Visual Studio 14" ^
+call :PngLibrary
+cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G %generator% ^
       -DSTATIC=1 ^
       -DCMAKE_PREFIX_PATH=%cwd%\.build ^
       -DCMAKE_INCLUDE_PATH=%cwd%\.build\include ^
@@ -102,7 +116,7 @@ cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G "
 msbuild %cwd%\.build\leptonica-master\build\leptonica.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\leptonica-master\build\src\Release\*.lib %cwd%\.build\lib
 
-cmake -H%cwd%\.build\tesseract-master -B%cwd%\.build\tesseract-master\build -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build -G "Visual Studio 14" -DSTATIC=1
+cmake -H%cwd%\.build\tesseract-master -B%cwd%\.build\tesseract-master\build -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build -G %generator% -DSTATIC=1
 msbuild %cwd%\.build\tesseract-master\build\tesseract.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\tesseract-master\build\src\%buildtype%\*.lib %cwd%\.build\lib
 
@@ -116,7 +130,7 @@ rd /s /q %cwd%\.build\jpeg-9b
 %downloader% http://www.ijg.org/files/jpegsr9b.zip %cwd%\.build\libjpeg.zip
 %unzipper% x %cwd%\.build\libjpeg.zip -o%cwd%\.build
 copy /V /Y %cwd%\3rdparty\libjpeg\CMakeLists.txt %cwd%\.build\jpeg-9b\CMakeLists.txt
-cmake -H%cwd%\.build\jpeg-9b -B%cwd%\.build\jpeg-9b\build -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=%buildtype%
+cmake -H%cwd%\.build\jpeg-9b -B%cwd%\.build\jpeg-9b\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype%
 msbuild %cwd%\.build\jpeg-9b\build\jpeg.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
 copy /V /Y %cwd%\.build\jpeg-9b\jconfig.h %cwd%\.build\include\jconfig.h
 copy /V /Y %cwd%\.build\jpeg-9b\jerror.h %cwd%\.build\include\jerror.h
@@ -132,4 +146,41 @@ copy /V /Y %cwd%\.build\jpeg-9b\build\%buildtype%\jpeg.lib %cwd%\.build\lib\jpeg
 
 exit /b
 
+:PngLibrary
+echo Png library
+del /q %cwd%\.build\libpng.zip
+rd /s /q %cwd%\.build\libpng
+rd /s /q %cwd%\.build\zlib
+%downloader% ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/lpng1621.zip %cwd%\.build\libpng.zip
+%downloader% http://zlib.net/zlib128.zip %cwd%\.build\zlib.zip
+%unzipper% x %cwd%\.build\libpng.zip -o%cwd%\.build
+%unzipper% x %cwd%\.build\zlib.zip   -o%cwd%\.build
+move /Y %cwd%\.build\lpng1621 %cwd%\.build\libpng
+move /Y %cwd%\.build\zlib-1.2.8 %cwd%\.build\zlib
+copy /V /Y %cwd%\3rdparty\libpng\CMakeLists.txt %cwd%\.build\libpng\CMakeLists.txt
 
+cmake -H%cwd%\.build\zlib -B%cwd%\.build\zlib\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype%
+msbuild %cwd%\.build\zlib\build\zlib.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+copy /V /Y %cwd%\.build\zlib\build\zconf.h %cwd%\.build\zlib\zconf.h
+copy /V /Y %cwd%\.build\zlib\zlib.h %cwd%\.build\include\zlib.h
+copy /V /Y %cwd%\.build\zlib\zconf.h %cwd%\.build\include\zconf.h
+copy /V /Y %cwd%\.build\zlib\zlib.h %cwd%\.build\leptonica-master\src\zlib.h
+copy /V /Y %cwd%\.build\zlib\zconf.h %cwd%\.build\leptonica-master\src\zconf.h
+copy /V /Y %cwd%\.build\zlib\build\%buildtype%\zlibstatic.lib %cwd%\.build\lib\zlib.lib
+
+
+cmake -H%cwd%\.build\libpng -B%cwd%\.build\libpng\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype% -DZLIB_LIBRARY=%cwd%\.build\zlib\build\%buildtype%\zlibstatic.lib -DZLIB_INCLUDE_DIR=%cwd%\.build\zlib
+msbuild %cwd%\.build\libpng\build\png.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+
+copy /V /Y %cwd%\.build\libpng\png.h %cwd%\.build\include\png.h
+copy /V /Y %cwd%\.build\libpng\pngconf.h %cwd%\.build\include\pngconf.h
+copy /V /Y %cwd%\.build\libpng\pnglibconf.h %cwd%\.build\include\pnglibconf.h
+
+copy /V /Y %cwd%\.build\libpng\png.h %cwd%\.build\leptonica-master\src\png.h
+copy /V /Y %cwd%\.build\libpng\pngconf.h %cwd%\.build\leptonica-master\src\pngconf.h
+copy /V /Y %cwd%\.build\libpng\pnglibconf.h %cwd%\.build\leptonica-master\src\pnglibconf.h
+copy /V /Y %cwd%\.build\libpng\build\%buildtype%\png.lib %cwd%\.build\lib\png.lib
+
+exit /b
+
+rem http://dl.maptools.org/dl/libtiff/tiff-3.8.2.zip
