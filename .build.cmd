@@ -41,7 +41,7 @@ call :DependLibraries
 rem call :LeptonicaBuild
 rem call :TesseractBuild
 rem call :PngLibrary
-rem exit /b
+rem call :TiffLibrary
 
 rd /s /q %cwd%\.build\recognizer
 mkdir %cwd%\.build\recognizer
@@ -69,6 +69,9 @@ xcopy /S /E /Y /C %cwd%\.build\tesseract-master\build\bin\%buildtype%\*.dll %cwd
            %cwd%\3rdparty\redist.vs2015\vc_redist.%platform%.exe ^
            %cwd%\.build\recognizer\bin\%buildtype%\tessdata ^
            %cwd%\.build\tesseract-master\build\bin\%buildtype%\tesseract.exe
+%zipper% a %cwd%\.build\restserver-devel_%platform%.zip ^
+           %cwd%\.build\include ^
+           %cwd%\.build\lib
 
 exit /b
 rem ==========================================
@@ -110,18 +113,20 @@ rd /s /q %cwd%\.build\sqlite-master
 :LeptonicaBuild
 call :JpegLibrary
 call :PngLibrary
+call :TiffLibrary
+
 cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G %generator% ^
       -DSTATIC=1 ^
       -DCMAKE_PREFIX_PATH=%cwd%\.build ^
       -DCMAKE_INCLUDE_PATH=%cwd%\.build\include ^
       -DJPEG_LIBRARY=%cwd%\.build\lib\jpeg.lib
 msbuild %cwd%\.build\leptonica-master\build\leptonica.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
-copy /V /Y %cwd%\.build\leptonica-master\build\src\Release\*.lib %cwd%\.build\lib
+copy /V /Y %cwd%\.build\leptonica-master\build\src\%buildtype%\*.lib %cwd%\.build\lib
 
 :TesseractBuild
 cmake -H%cwd%\.build\tesseract-master -B%cwd%\.build\tesseract-master\build -DLeptonica_BUILD_DIR=%cwd%\.build\leptonica-master\build -G %generator% -DSTATIC=1
 msbuild %cwd%\.build\tesseract-master\build\tesseract.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
-copy /V /Y %cwd%\.build\tesseract-master\build\src\%buildtype%\*.lib %cwd%\.build\lib
+copy /V /Y %cwd%\.build\tesseract-master\build\%buildtype%\*.lib %cwd%\.build\lib
 
 exit /b
 
@@ -186,4 +191,31 @@ copy /V /Y %cwd%\.build\libpng\build\%buildtype%\png.lib %cwd%\.build\lib\png.li
 
 exit /b
 
-rem http://dl.maptools.org/dl/libtiff/tiff-3.8.2.zip
+:TiffLibrary
+echo Tiff library
+del    /q %cwd%\.build\libtiff.zip
+rd  /s /q %cwd%\.build\libtiff
+%downloader% http://dl.maptools.org/dl/libtiff/tiff-3.8.2.zip %cwd%\.build\libtiff.zip
+%unzipper% x %cwd%\.build\libtiff.zip -o%cwd%\.build
+move /Y %cwd%\.build\tiff-3.8.2 %cwd%\.build\libtiff
+copy /V /Y %cwd%\3rdparty\libtiff\CMakeLists.txt %cwd%\.build\libtiff\CMakeLists.txt
+cmake -H%cwd%\.build\libtiff -B%cwd%\.build\libtiff\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype% ^
+                                                                         -DZLIB_LIBRARY=%cwd%\.build\lib\zlib.lib -DZLIB_INCLUDE_DIR=%cwd%\.build\include ^
+                                                                         -DJPEG_LIBRARY=%cwd%\.build\lib\jpeg.lib -DJPEG_INCLUDE_DIR=%cwd%\.build\include
+msbuild %cwd%\.build\libtiff\build\tiff.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+
+copy /V /Y %cwd%\.build\libtiff\libtiff\tiff.h     %cwd%\.build\include\tiff.h
+copy /V /Y %cwd%\.build\libtiff\libtiff\tiffio.h   %cwd%\.build\include\tiffio.h
+copy /V /Y %cwd%\.build\libtiff\libtiff\tiffvers.h %cwd%\.build\include\tiffvers.h
+copy /V /Y %cwd%\.build\libtiff\tiffconf.h         %cwd%\.build\include\tiffconf.h
+copy /V /Y %cwd%\.build\libtiff\tif_config.h       %cwd%\.build\include\tif_config.h
+                                                   
+copy /V /Y %cwd%\.build\include\tiff.h             %cwd%\.build\leptonica-master\src\tiff.h
+copy /V /Y %cwd%\.build\include\tiffio.h           %cwd%\.build\leptonica-master\src\tiffio.h
+copy /V /Y %cwd%\.build\include\tiffvers.h         %cwd%\.build\leptonica-master\src\tiffvers.h
+copy /V /Y %cwd%\.build\include\tiffconf.h         %cwd%\.build\leptonica-master\src\tiffconf.h
+copy /V /Y %cwd%\.build\include\tif_config.h       %cwd%\.build\leptonica-master\src\tif_config.h
+
+copy /V /Y %cwd%\.build\libtiff\build\%buildtype%\tiff.lib %cwd%\.build\lib\tiff.lib
+
+exit /b
