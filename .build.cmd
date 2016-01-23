@@ -119,6 +119,7 @@ call :TiffLibrary
 
 cmake -H%cwd%\.build\leptonica-master -B%cwd%\.build\leptonica-master\build -G %generator% ^
       -DSTATIC=1 ^
+      -DBUILD_PROG=1 ^
       -DCMAKE_PREFIX_PATH=%cwd%\.build ^
       -DCMAKE_INCLUDE_PATH=%cwd%\.build\include ^
       -DJPEG_LIBRARY=%cwd%\.build\lib\jpeg.lib
