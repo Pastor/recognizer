@@ -50,7 +50,7 @@ include_directories(${JPEG_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/libtiff)
 include_directories(${CMAKE_SOURCE_DIR})
 add_definitions(-D_LIB)
-set(INCLUDE_DIR ${CMAKE_SOURCE_DIR})
+set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libtiff)
 
 file(COPY ${CMAKE_SOURCE_DIR}/libtiff/tif_config.h.vc DESTINATION ${CMAKE_SOURCE_DIR})
 file(RENAME ${CMAKE_SOURCE_DIR}/tif_config.h.vc ${CMAKE_SOURCE_DIR}/tif_config.h)

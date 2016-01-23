@@ -42,6 +42,8 @@ rem call :LeptonicaBuild
 rem call :TesseractBuild
 rem call :PngLibrary
 rem call :TiffLibrary
+rem call :GifLibrary
+rem exit /b
 
 rd /s /q %cwd%\.build\recognizer
 mkdir %cwd%\.build\recognizer
@@ -218,4 +220,19 @@ copy /V /Y %cwd%\.build\include\tif_config.h       %cwd%\.build\leptonica-master
 
 copy /V /Y %cwd%\.build\libtiff\build\%buildtype%\tiff.lib %cwd%\.build\lib\tiff.lib
 
+exit /b
+
+:GifLibrary
+rem http://sourceforge.net/projects/gnuwin32/files/giflib/4.1.4-1/giflib-4.1.4-1-src.zip/download
+echo Gif library
+del    /q %cwd%\.build\libgif.zip
+rd  /s /q %cwd%\.build\libgif
+%downloader% http://freefr.dl.sourceforge.net/project/gnuwin32/giflib/4.1.4-1/giflib-4.1.4-1-src.zip %cwd%\.build\libgif.zip
+%unzipper% x %cwd%\.build\libgif.zip -o%cwd%\.build\libgif
+move /Y %cwd%\.build\libgif\src\giflib\4.1.4\giflib-4.1.4-src\lib %cwd%\.build\libgif
+copy /V /Y %cwd%\3rdparty\libgif\CMakeLists.txt %cwd%\.build\libgif\CMakeLists.txt
+cmake -H%cwd%\.build\libgif -B%cwd%\.build\libgif\build -G %generator% -DCMAKE_BUILD_TYPE=%buildtype% 
+msbuild %cwd%\.build\libgif\build\gif.sln /p:Platform=%vcplatform% /p:ReleaseBuild=true /p:Configuration=%buildtype%
+copy /V /Y %cwd%\.build\libgif\lib\gif_lib.h %cwd%\.build\include\gif_lib.h
+copy /V /Y %cwd%\.build\libgif\build\%buildtype%\gif.lib %cwd%\.build\lib\gif.lib
 exit /b

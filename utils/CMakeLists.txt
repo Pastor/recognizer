@@ -26,7 +26,7 @@ set(HGET_VERSION_PLAIN ${HGET_VERSION_MAJOR}.${HGET_VERSION_MINOR})
 
 
 file(GLOB hget_src
-    "hget.c"
+    "hget.cpp"
 )
 add_executable                  (hget ${hget_src})
 target_link_libraries           (hget Urlmon)
