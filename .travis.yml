@@ -49,7 +49,7 @@ install:
 
   - wget -O tesseract.zip https://github.com/tesseract-ocr/tesseract/archive/master.zip
   - unzip tesseract.zip -d .
-  - cmake -Htesseract-master -Btesseract-master/build -DLeptonica_BUILD_DIR=${BASEDIR}/leptonica-master/build -DSTATIC=1
+  - cmake -Htesseract-master -Btesseract-master/build -DLeptonica_DIR=${BASEDIR}/leptonica-master/build -DSTATIC=1
   - make -C tesseract-master/build
   - wget -O crypto-algorithms.zip https://github.com/B-Con/crypto-algorithms/archive/master.zip
   - unzip crypto-algorithms.zip -d .
